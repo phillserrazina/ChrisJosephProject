@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour {
 
 	void Update ()
 	{
+		// Reload the active scene if "ESC" is pressed.
 		if (Input.GetKeyDown (KeyCode.Escape)) 
 		{
 			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);

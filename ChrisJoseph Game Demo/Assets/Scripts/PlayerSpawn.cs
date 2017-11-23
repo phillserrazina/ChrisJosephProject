@@ -6,15 +6,21 @@ public class PlayerSpawn : MonoBehaviour {
 
 	// VARIABLES
 
-	public bool twoPlayers = false;
-	public bool threePlayer = false;
+	public bool twoPlayers = false;			// These variables keep track of
+	public bool threePlayer = false;		// how many players are playing.
 	public bool fourPlayer = false;
 	public bool fivePlayer = false;
 
-	public GameObject[] playerPrefab;
-	public GameObject enemyPrefab;
+	public GameObject[] playerPrefab;		// Stores the player objects.
+	public GameObject enemyPrefab;			// Stores the enemy object.
 
 	// FUNCTIONS
+
+	// The following functions instantiate 2-5 players.
+	// Positions are based on the prefabs' positions, can easily be altered
+	// by changing the prefabs' positions or creating a costum position by
+	// creating a Vector3 variable and/or Quaternion if desired.
+	// (Make those public or Serializable if you wish to change them in the inspector.)
 
 	public void SpawnTwoPlayers ()
 	{

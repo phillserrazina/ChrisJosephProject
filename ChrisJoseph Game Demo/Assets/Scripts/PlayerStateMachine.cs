@@ -6,20 +6,18 @@ public class PlayerStateMachine : MonoBehaviour {
 
 	// VARIABLES
 
-	private int camCount = 0;
+	private int camCount = 0;			// Keeps track of what camera is being used.
 
-	public bool canMove = true;
+	public GameObject waitingCanvas;	// Canvas used when in WAITING phase.
+	public GameObject playingCanvas;	// Canvas used when in PLAYING phase.
+	public GameObject deadCanvas;		// Canvas used when in DEAD phase.
+	public GameObject spectateCanvas;	// Canvas used when in SPECTATING phase.
 
-	public GameObject waitingCanvas;
-	public GameObject playingCanvas;
-	public GameObject deadCanvas;
-	public GameObject spectateCanvas;
+	public Camera[] cams;				// Array that contains all the cameras that will be used.
 
-	public Camera[] cams;
+	private PlayerSpawn player;			// Access to the PlayerSpawn script.
 
-	private PlayerSpawn player;
-
-	public Vector3 offset;
+	public Vector3 offset;				// Used to change the camera's position from the player's position.
 
 	public enum PlayerStates
 	{
@@ -29,7 +27,7 @@ public class PlayerStateMachine : MonoBehaviour {
 		SPECTATING
 	}
 
-	public PlayerStates currentState;
+	public PlayerStates currentState;	// Keeps track of the game state.
 
 	// FUNCTIONS
 
@@ -42,15 +40,19 @@ public class PlayerStateMachine : MonoBehaviour {
 
 	void Update ()
 	{
+		// Here we assign each camera to the respective player, putting them in the same position
+		// of their assigned player.
 		cams [1].transform.position = player.playerPrefab [0].transform.position + offset;
 		cams [2].transform.position = player.playerPrefab [1].transform.position + offset;
 		cams [3].transform.position = player.playerPrefab [2].transform.position + offset;
 		cams [4].transform.position = player.playerPrefab [3].transform.position + offset;
 		cams [5].transform.position = player.enemyPrefab.transform.position + offset;
-		
+
+
+		// State switch
 		switch (currentState) 
 		{
-		case(PlayerStates.WAITING):
+		case(PlayerStates.WAITING):					// ======== WAITING STATE ========
 
 			waitingCanvas.SetActive(true);
 			playingCanvas.SetActive(false);
@@ -67,7 +69,7 @@ public class PlayerStateMachine : MonoBehaviour {
 
 			break;
 
-		case(PlayerStates.PLAYING):
+		case(PlayerStates.PLAYING):					// ======== PLAYING STATE ========
 
 			waitingCanvas.SetActive(false);
 			playingCanvas.SetActive(true);
@@ -84,7 +86,7 @@ public class PlayerStateMachine : MonoBehaviour {
 
 			break;
 
-		case(PlayerStates.DEAD):
+		case(PlayerStates.DEAD):					// ======== DEAD STATE ========
 
 			waitingCanvas.SetActive(false);
 			playingCanvas.SetActive(false);
@@ -93,7 +95,7 @@ public class PlayerStateMachine : MonoBehaviour {
 			
 			break;
 
-		case(PlayerStates.SPECTATING):
+		case(PlayerStates.SPECTATING):				// ======== SPECTATING STATE ========
 
 			waitingCanvas.SetActive(false);
 			playingCanvas.SetActive(false);
@@ -102,6 +104,7 @@ public class PlayerStateMachine : MonoBehaviour {
 
 			cams [0].enabled = false;
 
+			// Changes the active camera based on the camCount.
 			if(camCount == 1)
 			{
 				cams [1].enabled = false;
@@ -142,17 +145,26 @@ public class PlayerStateMachine : MonoBehaviour {
 		}
 	}
 
+
+	// "NextState" function, changes the currentState to the next state 
+	// in the enum list.
 	public void NextState()
 	{
 		currentState = (PlayerStates)(((int)currentState + 1) % 5);
 	}
 
+
+	// Kills P1 and moves on to the next state (DEAD state).
 	public void KillPlayer1 ()
 	{
 		Destroy(GameObject.FindGameObjectWithTag("Player1"));
 		NextState();
 	}
 
+
+	// Changes the current camera to the next camera in the "cams" array
+	// by increasing the camCount variable. Also sets restrictions based
+	// on how many players are playing.
 	public void NextCam ()
 	{
 		camCount++;
